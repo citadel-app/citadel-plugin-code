@@ -1,0 +1,102 @@
+{
+  "name": "@citadel-app/code",
+  "version": "1.1.5",
+  "description": "Code editing, LSP, LaTeX compilation, and interactive REPL for Citadel.",
+  "author": "Citadel Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/citadel-app/citadel-plugin-code.git"
+  },
+  "engines": {
+    "citadel": ">=1.1.5"
+  },
+  "citadel": {
+    "title": "Code Module",
+    "icon": "assets/icon.svg",
+    "main": "dist/main.js",
+    "renderer": "dist/renderer.js",
+    "authorUrl": "https://github.com/citadel-app",
+    "verified": true,
+    "permissions": [
+      "@citadel-app/base:fs.readFile",
+      "@citadel-app/base:fs.readFileBinary",
+      "@citadel-app/base:fs.exists",
+      "@citadel-app/base:fs.writeFile",
+      "@citadel-app/base:fs.createDirectory"
+    ],
+    "providesIpcs": [
+      "kernel.start",
+      "kernel.execute",
+      "kernel.stop",
+      "kernel.status",
+      "latex.check",
+      "latex.compile",
+      "execution.start",
+      "execution.stop",
+      "execution.status",
+      "repl.startSession",
+      "repl.stopSession",
+      "repl.listContainers",
+      "repl.stopContainer",
+      "repl.removeContainer",
+      "repl.checkSession",
+      "repl.sendInput",
+      "code.getLspPort"
+    ],
+    "sidecars": [
+      {
+        "id": "execution-sidecar",
+        "type": "docker"
+      },
+      {
+        "id": "repl-sidecar",
+        "type": "docker"
+      }
+    ]
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "generate:marketplace": "node scripts/generate-marketplace-manifest.js"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@typescript/ata": "^0.9.8",
+    "monaco-editor": "^0.55.1",
+    "monaco-languageclient": "^10.7.0",
+    "uuid": "^9.0.1",
+    "vscode-jsonrpc": "^8.2.1",
+    "vscode-ws-jsonrpc": "^3.5.0",
+    "ws": "^8.18.0",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0"
+  },
+  "peerDependencies": {
+    "@citadel-app/core": "*",
+    "@citadel-app/sdk": "*",
+    "@citadel-app/ui": "*",
+    "lucide-react": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "*"
+  },
+  "devDependencies": {
+    "@citadel-app/core": "^1.1.5",
+    "@citadel-app/sdk": "^1.1.5",
+    "@citadel-app/ui": "^1.1.5",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@types/node": "^25.5.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.5.10",
+    "@vitejs/plugin-react": "^4.2.1",
+    "lucide-react": "^0.563.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.0.0"
+  }
+}

@@ -1,0 +1,98 @@
+name: Release Plugin
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build_and_release:
+    name: Build and Release Plugin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Generate Token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: citadel-app
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps --no-package-lock
+        env:
+          CITADEL_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Plugin
+        run: npm run build
+
+      - name: Get Version
+        id: get_version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Package Plugin (ZIP)
+        run: |
+          PLUGIN_NAME=$(node -p "require('./package.json').name.replace('@citadel-app/', 'citadel-plugin-')")
+          zip -r "${PLUGIN_NAME}.zip" dist/ package.json assets/ -x "*.git*" "node_modules/*" ".github/*"
+          echo "PLUGIN_ZIP=${PLUGIN_NAME}.zip" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: v${{ steps.get_version.outputs.VERSION }}
+          files: |
+            ${{ env.PLUGIN_ZIP }}
+            package.json
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          overwrite_files: true
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Notify Marketplace
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          TITLE=$(node -p "require('./package.json').citadel?.title || 'Plugin'")
+          DESCRIPTION=$(node -p "require('./package.json').description || ''")
+          AUTHOR=$(node -p "require('./package.json').author || ''")
+          REPO_URL=$(node -p "require('./package.json').repository?.url || ''")
+          CITADEL_VERSION_RANGE=$(node -p "require('./package.json').engines?.citadel || '>=1.0.0'")
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          PLUGIN_NAME=$(node -p "require('./package.json').name.replace('@citadel-app/', 'citadel-plugin-')")
+          BUNDLE_URL="https://github.com/$GITHUB_REPOSITORY_OWNER/${PLUGIN_NAME}/releases/download/v${VERSION}/${PLUGIN_NAME}.zip"
+          PERMISSIONS=$(node -p "JSON.stringify(require('./package.json').citadel?.permissions || [])")
+          CAPABILITIES=$(node -p "JSON.stringify(require('./package.json').citadel?.capabilities || [])")
+
+          PAYLOAD=$(jq -n \
+            --arg id "$NAME" \
+            --arg ver "$VERSION" \
+            --arg url "$BUNDLE_URL" \
+            --arg title "$TITLE" \
+            --arg desc "$DESCRIPTION" \
+            --arg auth "$AUTHOR" \
+            --arg repo "$REPO_URL" \
+            --arg cvr "$CITADEL_VERSION_RANGE" \
+            --argjson perms "$PERMISSIONS" \
+            --argjson caps "$CAPABILITIES" \
+            '{event_type: "new-plugin-release", client_payload: {plugin_id: $id, version: $ver, bundle_url: $url, title: $title, description: $desc, author: $auth, repo_url: $repo, citadel_version_range: $cvr, permissions: $perms, capabilities: $caps}}')
+
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ steps.app-token.outputs.token }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/citadel-app/citadel-marketplace/dispatches \
+            -d "$PAYLOAD"
