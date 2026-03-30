@@ -1,6 +1,6 @@
 {
   "name": "@citadel-app/code",
-  "version": "1.1.5",
+  "version": "1.2.1",
   "description": "Code editing, LSP, LaTeX compilation, and interactive REPL for Citadel.",
   "author": "Citadel Team",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/citadel-app/citadel-plugin-code.git"
   },
   "engines": {
-    "citadel": ">=1.1.5"
+    "citadel": ">=1.2.1"
   },
   "citadel": {
     "title": "Code Module",
@@ -87,9 +87,9 @@
     "react-router-dom": "*"
   },
   "devDependencies": {
-    "@citadel-app/core": "^1.1.5",
-    "@citadel-app/sdk": "^1.1.5",
-    "@citadel-app/ui": "^1.1.5",
+    "@citadel-app/core": "^1.2.1",
+    "@citadel-app/sdk": "^1.2.1",
+    "@citadel-app/ui": "^1.2.1",
     "@electron-toolkit/utils": "^4.0.0",
     "@types/node": "^25.5.0",
     "@types/react": "^18.3.11",
