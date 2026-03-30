@@ -26,12 +26,9 @@
       "@citadel-app/base:fs.createDirectory"
     ],
     "providesIpcs": [
-      "kernel.start",
-      "kernel.execute",
-      "kernel.stop",
-      "kernel.status",
       "latex.check",
       "latex.compile",
+
       "execution.start",
       "execution.stop",
       "execution.status",
@@ -70,8 +67,16 @@
     "vscode-ws-jsonrpc": "^3.5.0",
     "ws": "^8.18.0",
     "xterm": "^5.3.0",
-    "xterm-addon-fit": "^0.8.0"
+    "xterm-addon-fit": "^0.8.0",
+    "react-resizable-panels": "^4.6.0",
+    "next-themes": "^0.4.6",
+    "react-markdown": "^10.1.0",
+    "remark-math": "^6.0.0",
+    "rehype-katex": "^7.0.1",
+    "katex": "^0.16.0"
   },
+
+
   "peerDependencies": {
     "@citadel-app/core": "*",
     "@citadel-app/sdk": "*",
@@ -91,7 +96,9 @@
     "@types/react-dom": "^18.3.1",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.10",
+    "@types/katex": "^0.16.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "electron": "^31.0.0",
     "lucide-react": "^0.563.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

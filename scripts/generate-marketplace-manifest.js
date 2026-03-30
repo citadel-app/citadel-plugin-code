@@ -20,34 +20,18 @@ if (fs.existsSync(readmePath)) {
     console.log('[Marketplace Generator] Copied README.md');
 }
 
-// 3. Extract IPC capabilities and permissions from source
-const rendererIndex = path.join(pluginDir, 'src/renderer/index.ts');
-let ipcs = [];
-let permissions = [];
-
-if (fs.existsSync(rendererIndex)) {
-    const code = fs.readFileSync(rendererIndex, 'utf8');
-    
-    const ipcsMatch = code.match(/ipcs:\s*\[([\s\S]*?)\]/);
-    if (ipcsMatch) {
-        ipcs = ipcsMatch[1].split(',')
-            .map(s => s.trim().replace(/['"]/g, ''))
-            .filter(Boolean);
-    }
-
-    const permsMatch = code.match(/ipc:\s*\[([\s\S]*?)\]/);
-    if (permsMatch) {
-        permissions = permsMatch[1].split(',')
-            .map(s => s.trim().replace(/['"]/g, ''))
-            .filter(Boolean);
-    }
-}
-
-// 4. Build marketplace package.json
+// 3. Prepare metadata (package.json is already the source of truth)
 const metaPkg = { ...pluginPkg };
+// Ensure all required citadel fields are present for the marketplace
 metaPkg.citadel = metaPkg.citadel || {};
-metaPkg.citadel.capabilities = ipcs;
-metaPkg.citadel.permissions = permissions;
+metaPkg.citadel.providesIpcs = metaPkg.citadel.providesIpcs || [];
+metaPkg.citadel.permissions = metaPkg.citadel.permissions || [];
+metaPkg.citadel.sidecars = metaPkg.citadel.sidecars || [];
+metaPkg.citadel.capabilities = Array.from(new Set([
+    ...(metaPkg.citadel.capabilities || []),
+    ...(metaPkg.citadel.providesIpcs || [])
+]));
+
 
 // Copy icon if defined
 if (metaPkg.citadel.icon) {
