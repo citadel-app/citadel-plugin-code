@@ -1,6 +1,6 @@
 {
   "name": "@citadel-app/code",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "Code editing, LSP, LaTeX compilation, and interactive REPL for Citadel.",
   "author": "Citadel Team",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/citadel-app/citadel-plugin-code.git"
   },
   "engines": {
-    "citadel": ">=1.2.1"
+    "citadel": ">=1.2.3"
   },
   "citadel": {
     "title": "Code Module",
@@ -28,7 +28,6 @@
     "providesIpcs": [
       "latex.check",
       "latex.compile",
-
       "execution.start",
       "execution.stop",
       "execution.status",
@@ -54,8 +53,10 @@
   },
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build",
-    "generate:marketplace": "node scripts/generate-marketplace-manifest.js"
+    "build": "npm run build:main && npm run build:renderer",
+    "generate:marketplace": "node scripts/generate-marketplace-manifest.js",
+    "build:main": "vite build --mode main",
+    "build:renderer": "vite build --mode renderer"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -75,8 +76,6 @@
     "rehype-katex": "^7.0.1",
     "katex": "^0.16.0"
   },
-
-
   "peerDependencies": {
     "@citadel-app/core": "*",
     "@citadel-app/sdk": "*",
@@ -87,9 +86,9 @@
     "react-router-dom": "*"
   },
   "devDependencies": {
-    "@citadel-app/core": "^1.2.1",
-    "@citadel-app/sdk": "^1.2.1",
-    "@citadel-app/ui": "^1.2.1",
+    "@citadel-app/core": "^1.2.3",
+    "@citadel-app/sdk": "^1.2.3",
+    "@citadel-app/ui": "^1.2.3",
     "@electron-toolkit/utils": "^4.0.0",
     "@types/node": "^25.5.0",
     "@types/react": "^18.3.11",
