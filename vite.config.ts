@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     build: {
       outDir: 'dist',
-      emptyOutDir: isMain, // Only clear during main pass so renderer doesn't get wiped
+      emptyOutDir: isMain || (!true && mode === 'renderer'), // clear outDir only on first run
       lib: {
         entry: path.resolve(__dirname, isMain ? 'src/main/index.ts' : 'src/renderer/index.ts'),
         formats: ['cjs']
